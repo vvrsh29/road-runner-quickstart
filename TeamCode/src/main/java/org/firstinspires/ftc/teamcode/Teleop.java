@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
+import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.hardwareMap;
+
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -7,36 +9,73 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.sfdev.assembly.state.StateMachine;
 import com.sfdev.assembly.state.StateMachineBuilder;
+import org.firstinspires.ftc.teamcode.contants;
+import org.firstinspires.ftc.teamcode.Intake;
 
-import org.firstinspires.ftc.robotcore.external.StateMachine;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
 @TeleOp
 public class Teleop extends LinearOpMode {
+    //Intake
+    Servo claw = hardwareMap.get(Servo.class, "claw");
+    Servo wrist = hardwareMap.get(Servo.class, "wrist");
+    Servo shoulder = hardwareMap.get(Servo.class, "shoulder");
+    Servo elbow = hardwareMap.get(Servo.class, "elbow");
+    Servo SL = hardwareMap.get(Servo.class, "SL");
+    Servo SR = hardwareMap.get(Servo.class, "SR");
 
-    static final double INIT = 0.0;
-    Servo claw = hardwareMap.get(Servo.class, "riTEH");
-
+    //outtake
+    public Servo shoulderL = hardwareMap.get(Servo.class, "OShoulL");
+    public Servo shoulderR = hardwareMap.get(Servo.class, "OShoulR");
+    public Servo OUTelbow = hardwareMap.get(Servo.class, "OElbow");
+    public Servo OUTwrist = hardwareMap.get(Servo.class, "OWrist");
+    public Servo OUTclaw = hardwareMap.get(Servo.class, "OClaw");
     enum outtake
     {
+        INIT,
+        SPECPREP,
+        SAMPPREP,
+        SPECSCORE,
+        SAMPSCORE,
         PICKUP,
-        SCOREPREP,
-        SCORE,
         TRANSFER
     }
     @Override
     public void runOpMode() throws InterruptedException {
 
-        StateMachine outtake = new StateMachineBuilder()
-                .state(outtake.PICKUP)
+        StateMachine Outtake = new StateMachineBuilder()
+                .state(outtake.INIT)// first has to be INIT?
                 .onEnter(()->{
-                    claw.setPosition(0.1);
+                    OUTclaw.setPosition(contants.Outtake.Claw.INIT);
+                    OUTelbow.setPosition(contants.Outtake.Elbow.INIT);
+                    OUTwrist.setPosition(contants.Outtake.Wrist.INIT);
+                    shoulderL.setPosition(contants.Outtake.ShoulderLeft.INIT);
+                    shoulderR.setPosition(contants.Outtake.ShoulderRight.INIT);
                     System.out.println("Frist");
 
                 })
                 .transition(()-> gamepad1.a)
                 .onExit(()->System.out.println("exit"))
+                .state(outtake.PICKUP)
+                .onEnter(() -> {
+                    OUTclaw.setPosition(contants.Outtake.Claw.PICKUP);
+                    OUTelbow.setPosition(contants.Outtake.Elbow.PICKUP);
+                    OUTwrist.setPosition(contants.Outtake.Wrist.PICKUP);
+                    shoulderL.setPosition(contants.Outtake.ShoulderLeft.PICKUP);
+                    shoulderR.setPosition(contants.Outtake.ShoulderRight.PICKUP);
+                })
+                .transition(()-> gamepad1.b)
+                .onExit(()->System.out.println("exit"))
+                .state(outtake.PICKUP)
+                .onEnter(() -> {
+                    OUTclaw.setPosition(contants.Outtake.Claw.PICKUP);
+                    OUTelbow.setPosition(contants.Outtake.Elbow.PICKUP);
+                    OUTwrist.setPosition(contants.Outtake.Wrist.PICKUP);
+                    shoulderL.setPosition(contants.Outtake.ShoulderLeft.PICKUP);
+                    shoulderR.setPosition(contants.Outtake.ShoulderRight.PICKUP);
+                })
 
                 .build();
         // Declare our motors
