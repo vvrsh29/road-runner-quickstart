@@ -22,6 +22,7 @@ public class meepMeep5SpecAuto   {
         Vector2d end = new Vector2d(38,-64);
 
         myBot.runAction(myBot.getDrive().actionBuilder(initialPose)
+                //score 1
                 .strafeTo(new Vector2d(-4, -28))
                 .stopAndAdd(new SleepAction(0.4))
 
