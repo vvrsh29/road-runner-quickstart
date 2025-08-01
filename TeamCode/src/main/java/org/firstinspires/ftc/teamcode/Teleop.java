@@ -96,6 +96,26 @@ public class Teleop extends LinearOpMode {
                     shoulderL.setPosition(contants.Outtake.ShoulderLeft.TRANSFER);
                     shoulderR.setPosition(contants.Outtake.ShoulderRight.TRANSFER);
                 })
+                .transition(()-> gamepad1.right_bumper)
+                .onExit(()->System.out.println("exit"))
+                .state(outtake.SAMPSCORE)
+                .onEnter(() -> {
+                    OUTclaw.setPosition(contants.Outtake.Claw.SAMPSCORE);
+                    OUTelbow.setPosition(contants.Outtake.Elbow.SAMPSCORE);
+                    OUTwrist.setPosition(contants.Outtake.Wrist.SAMPSCORE);
+                    shoulderL.setPosition(contants.Outtake.ShoulderLeft.SAMPSCORE);
+                    shoulderR.setPosition(contants.Outtake.ShoulderRight.SAMPSCORE);
+                })
+                .transition(()-> gamepad1.left_bumper)
+                .onExit(()->System.out.println("exit"))
+                .state(outtake.SPECSCORE)
+                .onEnter(() -> {
+                    OUTclaw.setPosition(contants.Outtake.Claw.SPECSCORE);
+                    OUTelbow.setPosition(contants.Outtake.Elbow.SPECSCORE);
+                    OUTwrist.setPosition(contants.Outtake.Wrist.SPECSCORE);
+                    shoulderL.setPosition(contants.Outtake.ShoulderLeft.SPECSCORE);
+                    shoulderR.setPosition(contants.Outtake.ShoulderRight.SPECSCORE);
+                })
 
                 .build();
         // Declare our motors
