@@ -42,9 +42,17 @@ public class Teleop extends LinearOpMode {
         PICKUP,
         TRANSFER
     }
+    enum intake
+    {
+        INIT,
+        PIKCUPPREP,
+        PICKUP,
+        RETRACT,
+        TRANSFER,
+    }
     @Override
     public void runOpMode() throws InterruptedException {
-
+        //OUTTAKE
         StateMachine Outtake = new StateMachineBuilder()
                 .state(outtake.INIT)// first has to be INIT?
                 .onEnter(()->{
@@ -116,7 +124,80 @@ public class Teleop extends LinearOpMode {
                     shoulderL.setPosition(contants.Outtake.ShoulderLeft.SPECSCORE);
                     shoulderR.setPosition(contants.Outtake.ShoulderRight.SPECSCORE);
                 })
+                .build();
 
+        StateMachine Intake = new StateMachineBuilder()
+                .state(intake.INIT)// first has to be INIT?
+                .onEnter(()->{
+                    claw.setPosition(contants.Intake.Claw.INIT);
+                    elbow.setPosition(contants.Intake.Elbow.INIT);
+                    wrist.setPosition(contants.Outtake.Wrist.INIT);
+                    shoulder.setPosition(contants.Outtake.ShoulderLeft.INIT);
+                    SL.setPosition(contants.Outtake.ShoulderRight.INIT);
+                    SR.setPosition(contants.Outtake.ShoulderRight.INIT);
+                    System.out.println("Frist");
+
+                })
+                .transition(()-> gamepad1.a)
+                .onExit(()->System.out.println("exit"))
+                .state(outtake.PICKUP)
+                .onEnter(() -> {
+                    OUTclaw.setPosition(contants.Outtake.Claw.PICKUP);
+                    OUTelbow.setPosition(contants.Outtake.Elbow.PICKUP);
+                    OUTwrist.setPosition(contants.Outtake.Wrist.PICKUP);
+                    shoulderL.setPosition(contants.Outtake.ShoulderLeft.PICKUP);
+                    shoulderR.setPosition(contants.Outtake.ShoulderRight.PICKUP);
+                })
+                .transition(()-> gamepad1.b)
+                .onExit(()->System.out.println("exit"))
+                .state(outtake.SPECPREP)
+                .onEnter(() -> {
+                    OUTclaw.setPosition(contants.Outtake.Claw.SPECPREP);
+                    OUTelbow.setPosition(contants.Outtake.Elbow.SPECPREP);
+                    OUTwrist.setPosition(contants.Outtake.Wrist.SPECPREP);
+                    shoulderL.setPosition(contants.Outtake.ShoulderLeft.SPECPREP);
+                    shoulderR.setPosition(contants.Outtake.ShoulderRight.SPECPREP);
+                })
+                .transition(()-> gamepad1.x)
+                .onExit(()->System.out.println("exit"))
+                .state(outtake.SAMPPREP)
+                .onEnter(() -> {
+                    OUTclaw.setPosition(contants.Outtake.Claw.SAMPPREP);
+                    OUTelbow.setPosition(contants.Outtake.Elbow.SAMPPREP);
+                    OUTwrist.setPosition(contants.Outtake.Wrist.SAMPPREP);
+                    shoulderL.setPosition(contants.Outtake.ShoulderLeft.SAMPPREP);
+                    shoulderR.setPosition(contants.Outtake.ShoulderRight.SAMPPREP);
+                })
+                .transition(()-> gamepad1.y)
+                .onExit(()->System.out.println("exit"))
+                .state(outtake.TRANSFER)
+                .onEnter(() -> {
+                    OUTclaw.setPosition(contants.Outtake.Claw.TRANSFER1);
+                    OUTelbow.setPosition(contants.Outtake.Elbow.TRANSFER);
+                    OUTwrist.setPosition(contants.Outtake.Wrist.TRANSFER);
+                    shoulderL.setPosition(contants.Outtake.ShoulderLeft.TRANSFER);
+                    shoulderR.setPosition(contants.Outtake.ShoulderRight.TRANSFER);
+                })
+                .transition(()-> gamepad1.right_bumper)
+                .onExit(()->System.out.println("exit"))
+                .state(outtake.SAMPSCORE)
+                .onEnter(() -> {
+                    OUTclaw.setPosition(contants.Outtake.Claw.SAMPSCORE);
+                    OUTelbow.setPosition(contants.Outtake.Elbow.SAMPSCORE);
+                    OUTwrist.setPosition(contants.Outtake.Wrist.SAMPSCORE);
+                    shoulderL.setPosition(contants.Outtake.ShoulderLeft.SAMPSCORE);
+                    shoulderR.setPosition(contants.Outtake.ShoulderRight.SAMPSCORE);
+                })
+                .transition(()-> gamepad1.left_bumper)
+                .onExit(()->System.out.println("exit"))
+                .state(outtake.SPECSCORE)
+                .onEnter(() -> {
+                    OUTclaw.setPosition(contants.Outtake.Claw.SPECSCORE);
+                    OUTelbow.setPosition(contants.Outtake.Elbow.SPECSCORE);
+                    OUTwrist.setPosition(contants.Outtake.Wrist.SPECSCORE);
+                    shoulderL.setPosition(contants.Outtake.ShoulderLeft.SPECSCORE);
+                    shoulderR.setPosition(contants.Outtake.ShoulderRight.SPECSCORE);
+                })
                 .build();
         // Declare our motors
         // Make sure your ID's match your configuration
@@ -129,8 +210,8 @@ public class Teleop extends LinearOpMode {
         // If your robot moves backwards when commanded to go forwards,
         // reverse the left side instead.
         // See the note about this earlier on this page.
-        frontRightMotor.setDirection(DcMotorSimple.Direction.REVERSE);
-        backRightMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        frontLeftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        backLeftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 
         // Retrieve the IMU from the hardware map
         IMU imu = hardwareMap.get(IMU.class, "imu");
@@ -142,10 +223,13 @@ public class Teleop extends LinearOpMode {
         imu.initialize(parameters);
 
         waitForStart();
-
+        Outtake.start();
         if (isStopRequested()) return;
 
         while (opModeIsActive()) {
+
+            Outtake.update();
+
             double y = -gamepad1.left_stick_y; // Remember, Y stick value is reversed
             double x = gamepad1.left_stick_x;
             double rx = gamepad1.right_stick_x;

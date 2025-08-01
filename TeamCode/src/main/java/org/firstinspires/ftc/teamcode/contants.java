@@ -85,49 +85,47 @@ public class contants {
         }
 
         public static final class Wrist {
-            public static final double WINIT = 0.0;
-            public static final double WPICKUPPREP = 0.0;
-            public static final double WPICKUP = 0.0;
-            public static final double WRETRACT = 0.0;
-            public static final double WTRANSFER1 = 0.0;
+            public static final double INIT = 0.0;
+            public static final double PICKUPPREP = 0.0;
+            public static final double PICKUP = 0.0;
+            public static final double RETRACT = 0.0;
+            public static final double TRANSFER1 = 0.0;
 
             public static final class Elbow {
-                public static final double EINIT = 0.0;
-                public static final double EPICKUPPREP = 0.0;
-                public static final double EPICKUP = 0.0;
-                public static final double ERETRACT = 0.0;
-                public static final double ETRANSFER1 = 0.0;
+                public static final double INIT = 0.0;
+                public static final double PICKUPPREP = 0.0;
+                public static final double PICKUP = 0.0;
+                public static final double RETRACT = 0.0;
+                public static final double TRANSFER1 = 0.0;
 
             }
 
             public static final class Shoulder {
-                public static final double SHINIT = 0.0;
-                public static final double SHPICKUPPREP = 0.0;
-                public static final double SHPICKUP = 0.0;
-                public static final double SHRETRACT = 0.0;
-                public static final double SHTRANSFER1 = 0.0;
+                public static final double INIT = 0.0;
+                public static final double PICKUPPREP = 0.0;
+                public static final double PICKUP = 0.0;
+                public static final double RETRACT = 0.0;
+                public static final double TRANSFER1 = 0.0;
 
             }
 
             public static final class SlidesLeft {
                 public static final double EXTEND = 0.0;
                 public static final double RETRACT = 0.0;
-                public static final double SLINIT = RETRACT;
-                public static final double SLPICKUPPREP = EXTEND;
-                public static final double SLPICKUP = EXTEND;
-                public static final double SLRETRACT = RETRACT;
-                public static final double SLTRANSFER1 = RETRACT;
+                public static final double INIT = RETRACT;
+                public static final double PICKUPPREP = EXTEND;
+                public static final double PICKUP = EXTEND;
+                public static final double TRANSFER1 = RETRACT;
 
             }
 
             public static final class SlidesRight {
                 public static final double EXTEND = 0.0;
                 public static final double RETRACT = 0.0;
-                public static final double SRINIT = RETRACT;
-                public static final double SRPICKUPPREP = EXTEND;
-                public static final double SRPICKUP = EXTEND;
-                public static final double SRRETRACT = RETRACT;
-                public static final double SRTRANSFER1 = RETRACT;
+                public static final double INIT = RETRACT;
+                public static final double PICKUPPREP = EXTEND;
+                public static final double PICKUP = EXTEND;
+                public static final double TRANSFER1 = RETRACT;
 
             }
         }
