@@ -68,13 +68,33 @@ public class Teleop extends LinearOpMode {
                 })
                 .transition(()-> gamepad1.b)
                 .onExit(()->System.out.println("exit"))
-                .state(outtake.PICKUP)
+                .state(outtake.SPECPREP)
                 .onEnter(() -> {
-                    OUTclaw.setPosition(contants.Outtake.Claw.PICKUP);
-                    OUTelbow.setPosition(contants.Outtake.Elbow.PICKUP);
-                    OUTwrist.setPosition(contants.Outtake.Wrist.PICKUP);
-                    shoulderL.setPosition(contants.Outtake.ShoulderLeft.PICKUP);
-                    shoulderR.setPosition(contants.Outtake.ShoulderRight.PICKUP);
+                    OUTclaw.setPosition(contants.Outtake.Claw.SPECPREP);
+                    OUTelbow.setPosition(contants.Outtake.Elbow.SPECPREP);
+                    OUTwrist.setPosition(contants.Outtake.Wrist.SPECPREP);
+                    shoulderL.setPosition(contants.Outtake.ShoulderLeft.SPECPREP);
+                    shoulderR.setPosition(contants.Outtake.ShoulderRight.SPECPREP);
+                })
+                .transition(()-> gamepad1.x)
+                .onExit(()->System.out.println("exit"))
+                .state(outtake.SAMPPREP)
+                .onEnter(() -> {
+                    OUTclaw.setPosition(contants.Outtake.Claw.SAMPPREP);
+                    OUTelbow.setPosition(contants.Outtake.Elbow.SAMPPREP);
+                    OUTwrist.setPosition(contants.Outtake.Wrist.SAMPPREP);
+                    shoulderL.setPosition(contants.Outtake.ShoulderLeft.SAMPPREP);
+                    shoulderR.setPosition(contants.Outtake.ShoulderRight.SAMPPREP);
+                })
+                .transition(()-> gamepad1.y)
+                .onExit(()->System.out.println("exit"))
+                .state(outtake.TRANSFER)
+                .onEnter(() -> {
+                    OUTclaw.setPosition(contants.Outtake.Claw.TRANSFER1);
+                    OUTelbow.setPosition(contants.Outtake.Elbow.TRANSFER);
+                    OUTwrist.setPosition(contants.Outtake.Wrist.TRANSFER);
+                    shoulderL.setPosition(contants.Outtake.ShoulderLeft.TRANSFER);
+                    shoulderR.setPosition(contants.Outtake.ShoulderRight.TRANSFER);
                 })
 
                 .build();
