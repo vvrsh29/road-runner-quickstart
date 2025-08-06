@@ -12,12 +12,15 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.sfdev.assembly.state.StateMachine;
 import com.sfdev.assembly.state.StateMachineBuilder;
 import org.firstinspires.ftc.teamcode.contants;
-import org.firstinspires.ftc.teamcode.Intake;
+import org.firstinspires.ftc.teamcode.FUNCTIONS;
+
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
 @TeleOp
 public class Teleop extends LinearOpMode {
+
+    FUNCTIONS funct = new FUNCTIONS();
     //Intake
     Servo claw = hardwareMap.get(Servo.class, "claw");
     Servo wrist = hardwareMap.get(Servo.class, "wrist");
@@ -32,7 +35,7 @@ public class Teleop extends LinearOpMode {
     public Servo OUTelbow = hardwareMap.get(Servo.class, "OElbow");
     public Servo OUTwrist = hardwareMap.get(Servo.class, "OWrist");
     public Servo OUTclaw = hardwareMap.get(Servo.class, "OClaw");
-    enum outtake
+    public enum outtake
     {
         INIT,
         SPECPREP,
@@ -56,11 +59,7 @@ public class Teleop extends LinearOpMode {
         StateMachine Outtake = new StateMachineBuilder()
                 .state(outtake.INIT)// first has to be INIT?
                 .onEnter(()->{
-                    OUTclaw.setPosition(contants.Outtake.Claw.INIT);
-                    OUTelbow.setPosition(contants.Outtake.Elbow.INIT);
-                    OUTwrist.setPosition(contants.Outtake.Wrist.INIT);
-                    shoulderL.setPosition(contants.Outtake.ShoulderLeft.INIT);
-                    shoulderR.setPosition(contants.Outtake.ShoulderRight.INIT);
+                    funct.init();
                     System.out.println("Frist");
 
                 })
@@ -68,74 +67,44 @@ public class Teleop extends LinearOpMode {
                 .onExit(()->System.out.println("exit"))
                 .state(outtake.PICKUP)
                 .onEnter(() -> {
-                    OUTclaw.setPosition(contants.Outtake.Claw.PICKUP);
-                    OUTelbow.setPosition(contants.Outtake.Elbow.PICKUP);
-                    OUTwrist.setPosition(contants.Outtake.Wrist.PICKUP);
-                    shoulderL.setPosition(contants.Outtake.ShoulderLeft.PICKUP);
-                    shoulderR.setPosition(contants.Outtake.ShoulderRight.PICKUP);
+                    funct.pickup();
                 })
                 .transition(()-> gamepad1.b)
                 .onExit(()->System.out.println("exit"))
                 .state(outtake.SPECPREP)
                 .onEnter(() -> {
-                    OUTclaw.setPosition(contants.Outtake.Claw.SPECPREP);
-                    OUTelbow.setPosition(contants.Outtake.Elbow.SPECPREP);
-                    OUTwrist.setPosition(contants.Outtake.Wrist.SPECPREP);
-                    shoulderL.setPosition(contants.Outtake.ShoulderLeft.SPECPREP);
-                    shoulderR.setPosition(contants.Outtake.ShoulderRight.SPECPREP);
+                   funct.SPECPREP();
                 })
                 .transition(()-> gamepad1.x)
                 .onExit(()->System.out.println("exit"))
                 .state(outtake.SAMPPREP)
                 .onEnter(() -> {
-                    OUTclaw.setPosition(contants.Outtake.Claw.SAMPPREP);
-                    OUTelbow.setPosition(contants.Outtake.Elbow.SAMPPREP);
-                    OUTwrist.setPosition(contants.Outtake.Wrist.SAMPPREP);
-                    shoulderL.setPosition(contants.Outtake.ShoulderLeft.SAMPPREP);
-                    shoulderR.setPosition(contants.Outtake.ShoulderRight.SAMPPREP);
+                    funct.SAMPPREP();
                 })
                 .transition(()-> gamepad1.y)
                 .onExit(()->System.out.println("exit"))
                 .state(outtake.TRANSFER)
                 .onEnter(() -> {
-                    OUTclaw.setPosition(contants.Outtake.Claw.TRANSFER1);
-                    OUTelbow.setPosition(contants.Outtake.Elbow.TRANSFER);
-                    OUTwrist.setPosition(contants.Outtake.Wrist.TRANSFER);
-                    shoulderL.setPosition(contants.Outtake.ShoulderLeft.TRANSFER);
-                    shoulderR.setPosition(contants.Outtake.ShoulderRight.TRANSFER);
+                    funct.TRANSFER();
                 })
                 .transition(()-> gamepad1.right_bumper)
                 .onExit(()->System.out.println("exit"))
                 .state(outtake.SAMPSCORE)
                 .onEnter(() -> {
-                    OUTclaw.setPosition(contants.Outtake.Claw.SAMPSCORE);
-                    OUTelbow.setPosition(contants.Outtake.Elbow.SAMPSCORE);
-                    OUTwrist.setPosition(contants.Outtake.Wrist.SAMPSCORE);
-                    shoulderL.setPosition(contants.Outtake.ShoulderLeft.SAMPSCORE);
-                    shoulderR.setPosition(contants.Outtake.ShoulderRight.SAMPSCORE);
+                    funct.SAMPSCORE();
                 })
                 .transition(()-> gamepad1.left_bumper)
                 .onExit(()->System.out.println("exit"))
                 .state(outtake.SPECSCORE)
                 .onEnter(() -> {
-                    OUTclaw.setPosition(contants.Outtake.Claw.SPECSCORE);
-                    OUTelbow.setPosition(contants.Outtake.Elbow.SPECSCORE);
-                    OUTwrist.setPosition(contants.Outtake.Wrist.SPECSCORE);
-                    shoulderL.setPosition(contants.Outtake.ShoulderLeft.SPECSCORE);
-                    shoulderR.setPosition(contants.Outtake.ShoulderRight.SPECSCORE);
+                    funct.SPECSCORE();
                 })
                 .build();
 
         StateMachine Intake = new StateMachineBuilder()
                 .state(intake.INIT)// first has to be INIT?
                 .onEnter(()->{
-                    claw.setPosition(contants.Intake.Claw.INIT);
-                    elbow.setPosition(contants.Intake.Elbow.INIT);
-                    wrist.setPosition(contants.Outtake.Wrist.INIT);
-                    shoulder.setPosition(contants.Outtake.ShoulderLeft.INIT);
-                    SL.setPosition(contants.Outtake.ShoulderRight.INIT);
-                    SR.setPosition(contants.Outtake.ShoulderRight.INIT);
-                    System.out.println("Frist");
+                    funct.INTINIT();
 
                 })
                 .transition(()-> gamepad1.a)

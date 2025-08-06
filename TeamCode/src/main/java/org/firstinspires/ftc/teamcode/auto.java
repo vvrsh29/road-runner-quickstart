@@ -1,186 +1,168 @@
 package org.firstinspires.ftc.teamcode;
-import androidx.annotation.NonNull;
+
 import com.acmerobotics.dashboard.config.Config;
-import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.SequentialAction;
-import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
+import com.acmerobotics.roadrunner.SleepAction;
+import com.acmerobotics.roadrunner.TranslationalVelConstraint;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
-import org.firstinspires.ftc.teamcode.MecanumDrive;
 
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.Servo;
 
 @Config
-@Autonomous(name = "BLUE_TEST_AUTO_PIXEL", group = "Autonomous")
-public class BlueSideTestAuto extends LinearOpMode {
-    public class Lift {
-        private DcMotorEx lift;
+@Autonomous(name = "5 preload", group = "Autonomous")
 
-        public Lift(HardwareMap hardwareMap) {
-            lift = hardwareMap.get(DcMotorEx.class, "liftMotor");
-            lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-            lift.setDirection(DcMotorSimple.Direction.FORWARD);
-        }
+public class A5Push extends AutonFunctions {
 
-        public class LiftUp implements Action {
-            private boolean initialized = false;
-
-            @Override
-            public boolean run(@NonNull TelemetryPacket packet) {
-                if (!initialized) {
-                    lift.setPower(0.8);
-                    initialized = true;
-                }
-
-                double pos = lift.getCurrentPosition();
-                packet.put("liftPos", pos);
-                if (pos < 3000.0) {
-                    return true;
-                } else {
-                    lift.setPower(0);
-                    return false;
-                }
-            }
-        }
-        public Action liftUp() {
-            return new LiftUp();
-        }
-
-        public class LiftDown implements Action {
-            private boolean initialized = false;
-
-            @Override
-            public boolean run(@NonNull TelemetryPacket packet) {
-                if (!initialized) {
-                    lift.setPower(-0.8);
-                    initialized = true;
-                }
-
-                double pos = lift.getCurrentPosition();
-                packet.put("liftPos", pos);
-                if (pos > 100.0) {
-                    return true;
-                } else {
-                    lift.setPower(0);
-                    return false;
-                }
-            }
-        }
-        public Action liftDown(){
-            return new LiftDown();
-        }
-    }
-
-    public class Claw {
-        private Servo claw;
-
-        public Claw(HardwareMap hardwareMap) {
-            claw = hardwareMap.get(Servo.class, "claw");
-        }
-
-        public class CloseClaw implements Action {
-            @Override
-            public boolean run(@NonNull TelemetryPacket packet) {
-                claw.setPosition(0.55);
-                return false;
-            }
-        }
-        public Action closeClaw() {
-            return new CloseClaw();
-        }
-
-        public class OpenClaw implements Action {
-            @Override
-            public boolean run(@NonNull TelemetryPacket packet) {
-                claw.setPosition(1.0);
-                return false;
-            }
-        }
-        public Action openClaw() {
-            return new OpenClaw();
-        }
-    }
 
     @Override
     public void runOpMode() {
-        Pose2d initialPose = new Pose2d(11.8, 61.7, Math.toRadians(90));
-        MecanumDrive drive = new MecanumDrive(hardwareMap, initialPose);
-        Claw claw = new Claw(hardwareMap);
-        Lift lift = new Lift(hardwareMap);
+        Pose2d initialPose = new Pose2d(0, -62, Math.toRadians(-90));
+        initFunctions();
+        Vector2d accept = new Vector2d(38,-64);
+        Vector2d end = new Vector2d(50,-65);
+        double timeAfterScore = 0.25;
 
         // vision here that outputs position
-        int visionOutputPosition = 1;
 
-        TrajectoryActionBuilder tab1 = drive.actionBuilder(initialPose)
-                .lineToYSplineHeading(33, Math.toRadians(0))
-                .waitSeconds(2)
-                .setTangent(Math.toRadians(90))
-                .lineToY(48)
-                .setTangent(Math.toRadians(0))
-                .lineToX(32)
-                .strafeTo(new Vector2d(44.5, 30))
-                .turn(Math.toRadians(180))
-                .lineToX(47.5)
-                .waitSeconds(3);
-        TrajectoryActionBuilder tab2 = drive.actionBuilder(initialPose)
-                .lineToY(37)
-                .setTangent(Math.toRadians(0))
-                .lineToX(18)
-                .waitSeconds(3)
-                .setTangent(Math.toRadians(0))
-                .lineToXSplineHeading(46, Math.toRadians(180))
-                .waitSeconds(3);
-        TrajectoryActionBuilder tab3 = drive.actionBuilder(initialPose)
-                .lineToYSplineHeading(33, Math.toRadians(180))
-                .waitSeconds(2)
-                .strafeTo(new Vector2d(46, 30))
-                .waitSeconds(3);
-        Action trajectoryActionCloseOut = tab1.endTrajectory().fresh()
-                .strafeTo(new Vector2d(48, 12))
+        Action scorePreload = drive.actionBuilder(initialPose)
+                .stopAndAdd(new SequentialAction(scorePrep()))
+                .strafeTo(new Vector2d(-2, -28))
+                .stopAndAdd(new SequentialAction(scoreSpec()))
+                .stopAndAdd(new SleepAction(timeAfterScore))
+                .stopAndAdd(new SequentialAction(scorePickup()))
+
                 .build();
 
-        // actions that need to happen on init; for instance, a claw tightening.
-        Actions.runBlocking(claw.closeClaw());
+        Action push = drive.actionBuilder(new Pose2d(-2, -35, Math.toRadians(-90)))
+
+                .setTangent(Math.toRadians(-90))
+                .splineToConstantHeading(new Vector2d(30,-45),Math.toRadians(90), new TranslationalVelConstraint(170))
+
+                .setTangent(Math.toRadians(90))
+                .splineToConstantHeading(new Vector2d(38,-20), Math.toRadians(90))
+                .splineToConstantHeading(new Vector2d(50,-15),Math.toRadians(-90), new TranslationalVelConstraint(170))
+                .waitSeconds(.02)
+
+                .setTangent(Math.toRadians(-90))
+                .splineToConstantHeading(new Vector2d(50,-45),Math.toRadians(-90), new TranslationalVelConstraint(170))
+
+                .setTangent(Math.toRadians(135))
+                .splineToConstantHeading(new Vector2d(58,-10),Math.toRadians(-90), new TranslationalVelConstraint(170))
+                .waitSeconds(.02)
+
+                .setTangent(Math.toRadians(-90))
+                .splineToConstantHeading(new Vector2d(58,-45),Math.toRadians(-90), new TranslationalVelConstraint(170))
+
+                .setTangent(Math.toRadians(135))
+                .splineToConstantHeading(new Vector2d(68,-10),Math.toRadians(-80), new TranslationalVelConstraint(170))
+                .waitSeconds(.02)
+
+                .setTangent(Math.toRadians(-90))
+                .splineToConstantHeading(new Vector2d(68,-43),Math.toRadians(-70), new TranslationalVelConstraint(170))
+
+                .setTangent(Math.toRadians(-90))
+                .splineToConstantHeading(accept,Math.toRadians(-90))
+                .waitSeconds(.05)
+                .strafeTo(new Vector2d(38,-65))
+                .stopAndAdd(closeClaw())
+                .waitSeconds(0.1)
+                .stopAndAdd(scorePrep())
+
+                .build();
+
+        Action firstCycle = drive.actionBuilder(new Pose2d(accept, Math.toRadians(-90)))
+
+                .setTangent(90)
+                .splineToConstantHeading(new Vector2d(10, -30), Math.toRadians(90), new TranslationalVelConstraint(130))
+
+                .strafeTo(new Vector2d(10,-28))
+                .afterTime(.05, new SequentialAction(scoreSpec()))
+
+                .waitSeconds(timeAfterScore)
+                .stopAndAdd(new SequentialAction(scorePickup()))
+
+                .splineToConstantHeading(accept,Math.toRadians(-90), new TranslationalVelConstraint(80))
+
+                .strafeTo(new Vector2d(38,-65))
+                .afterTime(.05, new SequentialAction(closeClaw()))
+                .waitSeconds(0.07)
+                .stopAndAdd(scorePrep())
+                .build();
+
+        Action secondCycle = drive.actionBuilder(new Pose2d(accept, Math.toRadians(-90)))
+
+                .setTangent(90)
+                .splineToConstantHeading(new Vector2d(8, -30), Math.toRadians(90), new TranslationalVelConstraint(130))
+
+                .strafeTo(new Vector2d(8,-28))
+                .afterTime(.05, new SequentialAction(scoreSpec()))
+
+                .waitSeconds(timeAfterScore)
+                .stopAndAdd(new SequentialAction(scorePickup()))
+
+                .splineToConstantHeading(accept,Math.toRadians(-90), new TranslationalVelConstraint(80))
+
+                .strafeTo(new Vector2d(38,-65))
+                .afterTime(.05, new SequentialAction(closeClaw()))
+                .waitSeconds(0.07)
+                .stopAndAdd(scorePrep())
+                .build();
+
+        Action thirdCycle = drive.actionBuilder(new Pose2d(accept, Math.toRadians(-90)))
+
+                .setTangent(90)
+                .splineToConstantHeading(new Vector2d(6, -30), Math.toRadians(90), new TranslationalVelConstraint(130))
+
+                .strafeTo(new Vector2d(6,-28))
+                .afterTime(.05, new SequentialAction(scoreSpec()))
+
+                .waitSeconds(timeAfterScore)
+                .stopAndAdd(new SequentialAction(scorePickup()))
+
+                .splineToConstantHeading(accept,Math.toRadians(-90), new TranslationalVelConstraint(80))
+
+                .strafeTo(new Vector2d(38,-65))
+                .afterTime(.05, new SequentialAction(closeClaw()))
+                .waitSeconds(0.07)
+                .stopAndAdd(scorePrep())
+                .build();
+
+        Action fourthCycle = drive.actionBuilder(new Pose2d(accept, Math.toRadians(-90)))
+
+                .setTangent(90)
+                .splineToConstantHeading(new Vector2d(4, -30), Math.toRadians(90),  new TranslationalVelConstraint(130))
+
+                .strafeTo(new Vector2d(4,-28))
+                .afterTime(.05, new SequentialAction(scoreSpec()))
+                .stopAndAdd(new SleepAction(timeAfterScore))
+                .stopAndAdd(new SequentialAction(scorePickup()))
+                .build();
+
+        Action park = drive.actionBuilder(new Pose2d(new Vector2d(3, -30), Math.toRadians(-90)))
+                .afterTime(0.25, new SequentialAction(autoEnd()))
+                .splineToConstantHeading(accept,Math.toRadians(-90), new TranslationalVelConstraint(200))
+                .build();
 
 
-        while (!isStopRequested() && !opModeIsActive()) {
-            int position = visionOutputPosition;
-            telemetry.addData("Position during Init", position);
-            telemetry.update();
-        }
-
-        int startPosition = visionOutputPosition;
-        telemetry.addData("Starting Position", startPosition);
-        telemetry.update();
         waitForStart();
 
         if (isStopRequested()) return;
 
-        Action trajectoryActionChosen;
-        if (startPosition == 1) {
-            trajectoryActionChosen = tab1.build();
-        } else if (startPosition == 2) {
-            trajectoryActionChosen = tab2.build();
-        } else {
-            trajectoryActionChosen = tab3.build();
-        }
 
         Actions.runBlocking(
                 new SequentialAction(
-                        trajectoryActionChosen,
-                        lift.liftUp(),
-                        claw.openClaw(),
-                        lift.liftDown(),
-                        trajectoryActionCloseOut
+                        scorePreload,
+                        push,
+                        firstCycle,
+                        secondCycle,
+                        thirdCycle,
+                        fourthCycle,
+                        park
                 )
         );
+
     }
 }
