@@ -21,20 +21,20 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 public class Teleop extends LinearOpMode {
 
     FUNCTIONS funct = new FUNCTIONS();
-    //Intake
-    Servo claw = hardwareMap.get(Servo.class, "claw");
-    Servo wrist = hardwareMap.get(Servo.class, "wrist");
-    Servo shoulder = hardwareMap.get(Servo.class, "shoulder");
-    Servo elbow = hardwareMap.get(Servo.class, "elbow");
-    Servo SL = hardwareMap.get(Servo.class, "SL");
-    Servo SR = hardwareMap.get(Servo.class, "SR");
-
-    //outtake
-    public Servo shoulderL = hardwareMap.get(Servo.class, "OShoulL");
-    public Servo shoulderR = hardwareMap.get(Servo.class, "OShoulR");
-    public Servo OUTelbow = hardwareMap.get(Servo.class, "OElbow");
-    public Servo OUTwrist = hardwareMap.get(Servo.class, "OWrist");
-    public Servo OUTclaw = hardwareMap.get(Servo.class, "OClaw");
+//    //Intake
+//    Servo claw = hardwareMap.get(Servo.class, "claw");
+//    Servo wrist = hardwareMap.get(Servo.class, "wrist");
+//    Servo shoulder = hardwareMap.get(Servo.class, "shoulder");
+//    Servo elbow = hardwareMap.get(Servo.class, "elbow");
+//    Servo SL = hardwareMap.get(Servo.class, "SL");
+//    Servo SR = hardwareMap.get(Servo.class, "SR");
+//
+//    //outtake
+//    public Servo shoulderL = hardwareMap.get(Servo.class, "OShoulL");
+//    public Servo shoulderR = hardwareMap.get(Servo.class, "OShoulR");
+//    public Servo OUTelbow = hardwareMap.get(Servo.class, "OElbow");
+//    public Servo OUTwrist = hardwareMap.get(Servo.class, "OWrist");
+//    public Servo OUTclaw = hardwareMap.get(Servo.class, "OClaw");
     public enum outtake
     {
         INIT,
@@ -51,7 +51,9 @@ public class Teleop extends LinearOpMode {
         PIKCUPPREP,
         PICKUP,
         RETRACT,
-        TRANSFER,
+        TRANSFER1,
+        TRANSFER2
+
     }
     @Override
     public void runOpMode() throws InterruptedException {
@@ -109,63 +111,33 @@ public class Teleop extends LinearOpMode {
                 })
                 .transition(()-> gamepad1.a)
                 .onExit(()->System.out.println("exit"))
-                .state(outtake.PICKUP)
+                .state(intake.PIKCUPPREP)
                 .onEnter(() -> {
-                    OUTclaw.setPosition(contants.Outtake.Claw.PICKUP);
-                    OUTelbow.setPosition(contants.Outtake.Elbow.PICKUP);
-                    OUTwrist.setPosition(contants.Outtake.Wrist.PICKUP);
-                    shoulderL.setPosition(contants.Outtake.ShoulderLeft.PICKUP);
-                    shoulderR.setPosition(contants.Outtake.ShoulderRight.PICKUP);
+                    funct.PICKUPPREP();
                 })
                 .transition(()-> gamepad1.b)
                 .onExit(()->System.out.println("exit"))
-                .state(outtake.SPECPREP)
+                .state(intake.PICKUP)
                 .onEnter(() -> {
-                    OUTclaw.setPosition(contants.Outtake.Claw.SPECPREP);
-                    OUTelbow.setPosition(contants.Outtake.Elbow.SPECPREP);
-                    OUTwrist.setPosition(contants.Outtake.Wrist.SPECPREP);
-                    shoulderL.setPosition(contants.Outtake.ShoulderLeft.SPECPREP);
-                    shoulderR.setPosition(contants.Outtake.ShoulderRight.SPECPREP);
+                    funct.PICKUP();
                 })
                 .transition(()-> gamepad1.x)
                 .onExit(()->System.out.println("exit"))
-                .state(outtake.SAMPPREP)
+                .state(intake.RETRACT)
                 .onEnter(() -> {
-                    OUTclaw.setPosition(contants.Outtake.Claw.SAMPPREP);
-                    OUTelbow.setPosition(contants.Outtake.Elbow.SAMPPREP);
-                    OUTwrist.setPosition(contants.Outtake.Wrist.SAMPPREP);
-                    shoulderL.setPosition(contants.Outtake.ShoulderLeft.SAMPPREP);
-                    shoulderR.setPosition(contants.Outtake.ShoulderRight.SAMPPREP);
+                funct.RETRACT();
                 })
                 .transition(()-> gamepad1.y)
                 .onExit(()->System.out.println("exit"))
-                .state(outtake.TRANSFER)
+                .state(intake.TRANSFER1)
                 .onEnter(() -> {
-                    OUTclaw.setPosition(contants.Outtake.Claw.TRANSFER1);
-                    OUTelbow.setPosition(contants.Outtake.Elbow.TRANSFER);
-                    OUTwrist.setPosition(contants.Outtake.Wrist.TRANSFER);
-                    shoulderL.setPosition(contants.Outtake.ShoulderLeft.TRANSFER);
-                    shoulderR.setPosition(contants.Outtake.ShoulderRight.TRANSFER);
+                    funct.TRANSFER1();
                 })
                 .transition(()-> gamepad1.right_bumper)
                 .onExit(()->System.out.println("exit"))
-                .state(outtake.SAMPSCORE)
+                .state(intake.TRANSFER2)
                 .onEnter(() -> {
-                    OUTclaw.setPosition(contants.Outtake.Claw.SAMPSCORE);
-                    OUTelbow.setPosition(contants.Outtake.Elbow.SAMPSCORE);
-                    OUTwrist.setPosition(contants.Outtake.Wrist.SAMPSCORE);
-                    shoulderL.setPosition(contants.Outtake.ShoulderLeft.SAMPSCORE);
-                    shoulderR.setPosition(contants.Outtake.ShoulderRight.SAMPSCORE);
-                })
-                .transition(()-> gamepad1.left_bumper)
-                .onExit(()->System.out.println("exit"))
-                .state(outtake.SPECSCORE)
-                .onEnter(() -> {
-                    OUTclaw.setPosition(contants.Outtake.Claw.SPECSCORE);
-                    OUTelbow.setPosition(contants.Outtake.Elbow.SPECSCORE);
-                    OUTwrist.setPosition(contants.Outtake.Wrist.SPECSCORE);
-                    shoulderL.setPosition(contants.Outtake.ShoulderLeft.SPECSCORE);
-                    shoulderR.setPosition(contants.Outtake.ShoulderRight.SPECSCORE);
+                    funct.TRANSFER2();
                 })
                 .build();
         // Declare our motors

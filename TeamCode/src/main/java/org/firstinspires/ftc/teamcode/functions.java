@@ -3,6 +3,8 @@ package org.firstinspires.ftc.teamcode;
 import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.hardwareMap;
 
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.util.ElapsedTime;
+
 import org.firstinspires.ftc.teamcode.contants;
 public class FUNCTIONS {
     //OUTTAKE
@@ -34,6 +36,20 @@ public class FUNCTIONS {
         OUTwrist.setPosition(contants.Outtake.Wrist.PICKUP);
         shoulderL.setPosition(contants.Outtake.ShoulderLeft.PICKUP);
         shoulderR.setPosition(contants.Outtake.ShoulderRight.PICKUP);
+
+//        public void PICKUP() {
+//            ElapsedTime timer = new ElapsedTime();
+//
+//            // Step 1: Close the claw
+//            OUTclaw.setPosition(contants.Outtake.Claw.PICKUP);
+//            timer.reset();
+//            if (timer.milliseconds() > 200) {
+//                OUTelbow.setPosition(contants.Outtake.Elbow.PICKUP);
+//                OUTwrist.setPosition(contants.Outtake.Wrist.PICKUP);
+//                shoulderL.setPosition(contants.Outtake.ShoulderLeft.PICKUP);
+//                shoulderR.setPosition(contants.Outtake.ShoulderRight.PICKUP);
+//            }
+//        }
     }
     public void SPECPREP() {
         OUTclaw.setPosition(contants.Outtake.Claw.SPECPREP);
@@ -95,7 +111,10 @@ public class FUNCTIONS {
         shoulder.setPosition(contants.Intake.Shoulder.PICKUP);
         SL.setPosition(contants.Intake.SlidesLeft.PICKUP);
         SR.setPosition(contants.Intake.SlidesRight.PICKUP);
+
     }
+
+
     public void RETRACT() {
         claw.setPosition(contants.Intake.Claw.RETRACT);
         elbow.setPosition(contants.Intake.Elbow.RETRACT);
